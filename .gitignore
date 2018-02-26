@@ -1,0 +1,4 @@
+.build*
+/istio-*.tar.gz
+/vendor-istio-*.tar.gz
+
