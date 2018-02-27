@@ -9,7 +9,7 @@
 %global debug_package   %{nil}
 %endif
 
-%global git_commit 3571ee06d1fc82053ab6f2298360ee8c06b58de5
+%global git_commit 2cb09cdf040a8573330a127947b11e5082619895
 %global git_shortcommit  %(c=%{git_commit}; echo ${c:0:7})
 
 %global provider        github
@@ -23,14 +23,14 @@
 %global vendor_repo     vendor-istio
 # https://github.com/openshift-istio/vendor-istio
 %global vendor_prefix %{provider}.%{provider_tld}/%{project}/%{vendor_repo}
-%global vendor_git_commit 1c8002038e1782d4a38e22f8e3c328b51b764664
+%global vendor_git_commit 450f8bedd41fad02673c95a702987e1d700beb09
 
 %global build_date 20180227
 %global snapshot_info %{build_date}git%{git_shortcommit}
 
 Name:           istio
-Version:        0.7.0
-Release:        0.2.0.git.0.%{git_shortcommit}%{?dist}
+Version:        0.6.0
+Release:        0.1.0.git.0.%{git_shortcommit}%{?dist}
 Summary:        An open platform to connect, manage, and secure microservices
 License:        ASL 2.0
 URL:            https://%{provider_prefix}
@@ -423,5 +423,5 @@ sort -u -o devel.file-list devel.file-list
 %endif
 
 %changelog
-* Tue Feb 27 2018 Jonh Wendell <jonh.wendell@redhat.com> - 0.7.0
+* Tue Feb 27 2018 Jonh Wendell <jonh.wendell@redhat.com> - 0.6.0
 - First package
