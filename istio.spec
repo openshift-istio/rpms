@@ -9,7 +9,7 @@
 %global debug_package   %{nil}
 %endif
 
-%global git_commit 3571ee06d1fc82053ab6f2298360ee8c06b58de5
+%global git_commit 5f29cf4d62d10e8f3f9969b64877e697b01e3f55
 %global git_shortcommit  %(c=%{git_commit}; echo ${c:0:7})
 
 %global provider        github
@@ -23,14 +23,14 @@
 %global vendor_repo     vendor-istio
 # https://github.com/openshift-istio/vendor-istio
 %global vendor_prefix %{provider}.%{provider_tld}/%{project}/%{vendor_repo}
-%global vendor_git_commit 1c8002038e1782d4a38e22f8e3c328b51b764664
+%global vendor_git_commit 72505dbcbb3de8d5bbc3c9087e9e87a310a60b2a
 
-%global build_date 20180227
+%global build_date 20180301
 %global snapshot_info %{build_date}git%{git_shortcommit}
 
 Name:           istio
 Version:        0.7.0
-Release:        0.2.0.git.0.%{git_shortcommit}%{?dist}
+Release:        0.3.0.git.0.%{git_shortcommit}%{?dist}
 Summary:        An open platform to connect, manage, and secure microservices
 License:        ASL 2.0
 URL:            https://%{provider_prefix}
