@@ -25,12 +25,12 @@
 %global vendor_prefix %{provider}.%{provider_tld}/%{project}/%{vendor_repo}
 %global vendor_git_commit 450f8bedd41fad02673c95a702987e1d700beb09
 
-%global build_date 20180301
+%global build_date 20180302
 %global snapshot_info %{build_date}git%{git_shortcommit}
 
 Name:           istio
 Version:        0.6.0
-Release:        1
+Release:        1%{?dist}
 Summary:        An open platform to connect, manage, and secure microservices
 License:        ASL 2.0
 URL:            https://%{provider_prefix}
