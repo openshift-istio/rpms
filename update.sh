@@ -48,9 +48,16 @@ function update_snapshot_info() {
     sed -i "s/%global build_date .*/%global build_date ${date}/" istio.spec
 }
 
+function update_buildinfo() {
+    local sha="$1"
+    sed -i "s/buildGitRevision .*/buildGitRevision ${sha}/" buildinfo
+    git add buildinfo
+}
+
 [ $# -eq 2 ] || usage
 
 update_commit "" "$1"
 update_commit "vendor-" "$2"
 update_snapshot_info
+update_buildinfo "$1"
 new_sources
