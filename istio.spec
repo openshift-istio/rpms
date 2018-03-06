@@ -25,12 +25,12 @@
 %global vendor_prefix %{provider}.%{provider_tld}/%{project}/%{vendor_repo}
 %global vendor_git_commit 450f8bedd41fad02673c95a702987e1d700beb09
 
-%global build_date 20180302
+%global build_date 20180306
 %global snapshot_info %{build_date}git%{git_shortcommit}
 
 Name:           istio
 Version:        0.6.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        An open platform to connect, manage, and secure microservices
 License:        ASL 2.0
 URL:            https://%{provider_prefix}
@@ -423,5 +423,8 @@ sort -u -o devel.file-list devel.file-list
 %endif
 
 %changelog
-* Tue Feb 27 2018 Jonh Wendell <jonh.wendell@redhat.com> - 0.6.0
+* Tue Mar 6 2018 Jonh Wendell <jonh.wendell@redhat.com> - 0.6.0-2
+- Update buildinfo file. Now it will be updated by update.sh
+
+* Tue Feb 27 2018 Jonh Wendell <jonh.wendell@redhat.com> - 0.6.0-1
 - First package

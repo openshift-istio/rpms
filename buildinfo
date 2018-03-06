@@ -1,8 +1,6 @@
-buildAppVersion 20ff6804e97255543d873d1c0072afcd7b7e9e9d
-buildGitRevision 20ff6804e97255543d873d1c0072afcd7b7e9e9d
-buildGitBranch master
-buildUser jwendell
-buildHost jw-laptop
-buildVersion 20ff6804e97255543d873d1c0072afcd7b7e9e9d
+buildVersion 0.6.0
+buildGitRevision 2cb09cdf040a8573330a127947b11e5082619895
+buildUser redhat
+buildHost redhat
+buildDockerHub docker.io/openshiftistio
 buildStatus Clean
-buildID 2017-12-28-20ff6804
