@@ -28,6 +28,9 @@
 %global build_date 20180306
 %global snapshot_info %{build_date}git%{git_shortcommit}
 
+# Use /usr/local as base dir, once upstream heavily depends on that
+%global _prefix /usr/local
+
 Name:           istio
 Version:        0.7.0
 Release:        0.5.0.git.0.%{git_shortcommit}%{?dist}
