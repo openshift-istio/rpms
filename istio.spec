@@ -28,9 +28,12 @@
 %global build_date 20180306
 %global snapshot_info %{build_date}git%{git_shortcommit}
 
+# Use /usr/local as base dir, once upstream heavily depends on that
+%global _prefix /usr/local
+
 Name:           istio
 Version:        0.6.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        An open platform to connect, manage, and secure microservices
 License:        ASL 2.0
 URL:            https://%{provider_prefix}
@@ -423,6 +426,9 @@ sort -u -o devel.file-list devel.file-list
 %endif
 
 %changelog
+* Mon Mar 12 2018 Jonh Wendell <jonh.wendell@redhat.com> - 0.6.0-3
+- Use /usr/local as base dir, once upstream heavily depends on that
+
 * Tue Mar 6 2018 Jonh Wendell <jonh.wendell@redhat.com> - 0.6.0-2
 - Update buildinfo file. Now it will be updated by update.sh
 
