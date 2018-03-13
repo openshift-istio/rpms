@@ -9,7 +9,7 @@
 %global debug_package   %{nil}
 %endif
 
-%global git_commit 84c25f889cc5fd71aaaee75bafbd95cc3fa3c809
+%global git_commit 2c950e58155a5d9549a1202ae2f3d820cc25e43c
 %global git_shortcommit  %(c=%{git_commit}; echo ${c:0:7})
 
 %global provider        github
@@ -25,7 +25,7 @@
 %global vendor_prefix %{provider}.%{provider_tld}/%{project}/%{vendor_repo}
 %global vendor_git_commit 8114eecc6ea4569117fe11f77d2821fda0bb251a
 
-%global build_date 20180312
+%global build_date 20180313
 %global snapshot_info %{build_date}git%{git_shortcommit}
 
 # Use /usr/local as base dir, once upstream heavily depends on that
@@ -33,7 +33,7 @@
 
 Name:           istio
 Version:        0.7.0
-Release:        0.6.0.git.0.%{git_shortcommit}%{?dist}
+Release:        0.7.0.git.0.%{git_shortcommit}%{?dist}
 Summary:        An open platform to connect, manage, and secure microservices
 License:        ASL 2.0
 URL:            https://%{provider_prefix}
