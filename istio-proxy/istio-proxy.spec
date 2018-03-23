@@ -32,6 +32,10 @@ BuildRequires:  devtoolset-4-libstdc++-devel
 BuildRequires:  devtoolset-4-runtime
 BuildRequires:  libtool
 BuildRequires:  golang
+BuildRequires:  automake
+BuildRequires:  autoconf
+BuildRequires:  m4
+BuildRequires:  perl
 
 %if 0%{?centos} >= 7
 BuildRequires:  cmake3
@@ -75,9 +79,6 @@ fi
 if [[ ${PATH} != *"devtoolset"* ]]; then
   source /opt/rh/devtoolset-4/enable
 fi
-
-ln -s /usr/bin/aclocal aclocal-1.15
-ln -s /usr/bin/automake automake-1.15
 
 export PATH=$(pwd):$PATH
 
