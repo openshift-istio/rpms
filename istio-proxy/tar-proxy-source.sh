@@ -6,15 +6,20 @@ pushd /tmp/istio-proxy
 #clone proxy
 if [ ! -d "proxy" ]; then
   PROXY_VERSION=0.6.0
-  git clone https://github.com/istio/proxy -b ${PROXY_VERSION}
+  git clone https://github.com/openshift-istio/proxy -b ${PROXY_VERSION}
 fi
 
 #clone dependency source and custom recipes
 if [ ! -d "recipes" ]; then
-  git clone https://github.com/bdecoste/proxy-rpm
-  mv proxy-rpm/proxy/* .
-  rm -rf proxy-rpm
+  git clone https://github.com/openshift-istio/recipes-istio-proxy -b ${PROXY_VERSION} recipes
 fi
+
+#fetch dependency sources
+for filename in recipes/*.sh
+do
+  FETCH=true ./$filename
+done
+rm -rf *.gz
 
 #bazel fetch
 if [ ! -d "bazelorig" ]; then 
