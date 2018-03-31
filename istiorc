@@ -1,4 +1,4 @@
 export HUB=docker.io/openshiftistio
-export TAG=0.7.0
+export TAG=0.7.1
 export BUILDINFO=buildinfo
 export STATIC=1
