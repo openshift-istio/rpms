@@ -17,8 +17,8 @@
 %global provider_prefix %{provider}.%{provider_tld}/%{project}/%{repo}
 
 Name:           istio-proxy
-Version:        0.6.0
-Release:        2%{?dist}
+Version:        0.7.1
+Release:        3%{?dist}
 Summary:        The Istio Proxy is a microservice proxy that can be used on the client and server side, and forms a microservice mesh. The Proxy supports a large number of features.
 License:        ASL 2.0
 URL:            https://%{provider_prefix}
@@ -32,6 +32,10 @@ BuildRequires:  devtoolset-4-libstdc++-devel
 BuildRequires:  devtoolset-4-runtime
 BuildRequires:  libtool
 BuildRequires:  golang
+BuildRequires:  automake
+BuildRequires:  autoconf
+BuildRequires:  m4
+BuildRequires:  perl
 
 %if 0%{?centos} >= 7
 BuildRequires:  cmake3
@@ -42,6 +46,7 @@ BuildRequires:  llvm-toolset-7-cmake-data
 %endif
 
 Source0:        proxy-full.tar.xz
+Source1:        build.sh
 
 %description
 The Istio Proxy is a microservice proxy that can be used on the client and server side, and forms a microservice mesh. The Proxy supports a large number of features.
@@ -62,38 +67,18 @@ istio-proxy is the proxy required by the Istio Pilot Agent that talks to Istio p
 
 %build
 
-echo "Building for" %{distribution} 
-
 %if 0%{?centos} >= 7
-ln -s /usr/bin/cmake3 cmake
-%else
-if [[ ${PATH} != *"llvm-toolset"* ]]; then
-  source /opt/rh/llvm-toolset-7/enable
-fi
+  export CENTOS=true
 %endif
 
-if [[ ${PATH} != *"devtoolset"* ]]; then
-  source /opt/rh/devtoolset-4/enable
-fi
-
-ln -s /usr/bin/aclocal aclocal-1.15
-ln -s /usr/bin/automake automake-1.15
-
-export PATH=$(pwd):$PATH
-
-cd proxy
-
-bazel --output_base=${RPM_BUILD_DIR}/istio-proxy/bazel/base --output_user_root=${RPM_BUILD_DIR}/istio-proxy/bazel/root --batch build --config=release "//..."
-#bazel --batch build --config=release --experimental_external_repositories --experimental_repository_cache=${RPM_BUILD_DIR}/istio-proxy/bazel/X "//..."
-
-#bazel --output_base=${RPM_BUILD_DIR}/proxy/bazel/base --output_user_root=${RPM_BUILD_DIR}/proxy/bazel/root --batch build --config=release "//src/envoy -//external:android/crosstool -//external:android/sdk -//external:android/dx_jar_import -//external:android_sdk_for_testing -//external:android_ndk_for_testing -//external:has_androidsdk -//external:java_toolchain -//external:databinding_annotation_processor -//external:local_jdk -//external:jre-default -//external:jre -//external:jni_md_header-linux -//external:jni_md_header-freebsd -//external:jni_md_header-darwin -//external:jni_header -//external:jinja2 -//external:jdk-default -//external:jdk -//external:javac -//external:java_toolchain -//external:java -//external:jar -//external:go_sdk -//tools/deb:all -//:deb_version -//:darwin -//src/envoy:envoy_tar"
-#bazel --output_base=${RPM_BUILD_DIR}/proxy/bazel/base --output_user_root=${RPM_BUILD_DIR}/proxy/bazel/root --batch version 
+cd ..
+%{SOURCE1}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p ${RPM_BUILD_ROOT}/usr/local/bin
 
-cp -pav ${RPM_BUILD_DIR}/istio-proxy/proxy/bazel-bin/src/envoy/envoy ${RPM_BUILD_ROOT}/usr/local/bin
+cp -pav ${RPM_BUILD_DIR}/envoy ${RPM_BUILD_ROOT}/usr/local/bin
 
 %files
 /usr/local/bin/envoy
