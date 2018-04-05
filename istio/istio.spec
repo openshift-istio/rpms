@@ -2,6 +2,8 @@
 %global with_devel 0
 # Build with debug info rpm
 %global with_debug 0
+# Run unit tests
+%global with_tests 0
 
 %if 0%{?with_debug}
 %global _dwz_low_mem_die_limit 0
@@ -9,7 +11,7 @@
 %global debug_package   %{nil}
 %endif
 
-%global git_commit 4f27c988f7db1cb6afd0677059a989357b8394c5
+%global git_commit 97882cede142f5ac246a2e7cff4d6ff6bf631389
 %global git_shortcommit  %(c=%{git_commit}; echo ${c:0:7})
 
 %global provider        github
@@ -23,9 +25,9 @@
 %global vendor_repo     vendor-istio
 # https://github.com/openshift-istio/vendor-istio
 %global vendor_prefix %{provider}.%{provider_tld}/%{project}/%{vendor_repo}
-%global vendor_git_commit 5ef6a8d1b8f188468baf07b2256e4d33f888cd6b
+%global vendor_git_commit 763fb08c93d2de2903217b4e282fb8d4e364eeaf
 
-%global build_date 20180402
+%global build_date 20180405
 %global snapshot_info %{build_date}git%{git_shortcommit}
 
 # Use /usr/local as base dir, once upstream heavily depends on that
@@ -33,7 +35,7 @@
 
 Name:           istio
 Version:        0.8.0
-Release:        0.2.0.git.0.%{git_shortcommit}%{?dist}
+Release:        0.3.0.git.0.%{git_shortcommit}%{?dist}
 Summary:        An open platform to connect, manage, and secure microservices
 License:        ASL 2.0
 URL:            https://%{provider_prefix}
@@ -343,30 +345,41 @@ building other packages which use import path with
 %endif
 
 %prep
-%setup -q -n %{name}-%{git_commit}
 
-mkdir -p vendor
-tar zxf %{SOURCE1} -C vendor --strip=1
+rm -rf ISTIO
+mkdir -p ISTIO/src/istio.io/istio
+tar zxf %{SOURCE0} -C ISTIO/src/istio.io/istio --strip=1
 
-cp %{SOURCE2} .istiorc.mk
-cp %{SOURCE3} buildinfo
+mkdir -p ISTIO/src/istio.io/istio/vendor
+tar zxf %{SOURCE1} -C ISTIO/src/istio.io/istio/vendor --strip=1
+
+cp %{SOURCE2} ISTIO/src/istio.io/istio/.istiorc.mk
+cp %{SOURCE3} ISTIO/src/istio.io/istio/buildinfo
 
 %build
-
-mkdir -p src/istio.io
-ln -s ../../ src/istio.io/istio
-pushd src/istio.io/istio
-
+cd ISTIO
 export GOPATH=$(pwd):%{gopath}
-make pilot-discovery pilot-agent istioctl sidecar-injector mixc mixs istio-ca
 
+pushd src/istio.io/istio
+make pilot-discovery pilot-agent istioctl sidecar-injector mixc mixs istio-ca
 popd
 
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT%{_bindir}
 
-cp -pav out/linux_amd64/release/{pilot-discovery,pilot-agent,istioctl,sidecar-injector,mixs,mixc,istio_ca} $RPM_BUILD_ROOT%{_bindir}/
+cp -pav ISTIO/out/linux_amd64/release/{pilot-discovery,pilot-agent,istioctl,sidecar-injector,mixs,mixc,istio_ca} $RPM_BUILD_ROOT%{_bindir}/
+
+%if 0%{?with_tests}
+
+%check
+cd ISTIO
+export GOPATH=$(pwd):%{gopath}
+pushd src/istio.io/istio
+make localTestEnv test
+popd
+
+%endif
 
 # source codes for building projects
 %if 0%{?with_devel}
@@ -394,8 +407,8 @@ sort -u -o devel.file-list devel.file-list
 %{!?_licensedir:%global license %doc}
 
 %files
-%license LICENSE
-%doc     README.md
+%license ISTIO/src/istio.io/istio/LICENSE
+%doc     ISTIO/src/istio.io/istio/README.md
 
 %files pilot-discovery
 %{_bindir}/pilot-discovery
@@ -420,8 +433,8 @@ sort -u -o devel.file-list devel.file-list
 
 %if 0%{?with_devel}
 %files devel -f devel.file-list
-%license LICENSE
-%doc README.md code-of-conduct.md CONTRIBUTING.md
+%license ISTIO/src/istio.io/istio/LICENSE
+%doc ISTIO/src/istio.io/istio/README.md ISTIO/src/istio.io/istio/DEV-*.md ISTIO/src/istio.io/istio/CONTRIBUTING.md
 %dir %{gopath}/src/%{provider}.%{provider_tld}/%{project}
 %endif
 
