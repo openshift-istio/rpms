@@ -36,6 +36,10 @@ function set_default_envs() {
   if [ -z "${CREATE_TARBALL}" ]; then
     CREATE_TARBALL=false
   fi
+
+  if [ -z "${DEBUG_FETCH}" ]; then
+    DEBUG_FETCH=false
+  fi
 }
 
 function preprocess_envs() {
@@ -162,8 +166,13 @@ function fetch() {
         rm -rf *.gz
       fi
 
+      bazel_dir="bazel"
+      if [ "${DEBUG_FETCH}" == "true" ]; then
+        bazel_dir="bazelorig"
+      fi
+
       #bazel fetch
-      if [ ! -d "bazelorig" ]; then 
+      if [ ! -d "${bazel_dir}" ]; then 
         if [[ ${PATH} != *"devtoolset"* ]]; then
           source /opt/rh/devtoolset-4/enable
         fi
@@ -175,15 +184,20 @@ function fetch() {
         pushd ${FETCH_DIR}/istio-proxy/proxy
           bazel --output_base=${FETCH_DIR}/istio-proxy/bazel/base --output_user_root=${FETCH_DIR}/istio-proxy/bazel/root --batch fetch //...
         popd
-        cp -rfp bazel bazelorig
+
+        if [ "${DEBUG_FETCH}" == "true" ]; then
+          cp -rfp bazel bazelorig
+        fi
       fi
 
       if [ "$FETCH_ONLY" = "true" ]; then
         exit 0
       fi
 
-      rm -rf bazel
-      cp -rfp bazelorig bazel
+      if [ "${DEBUG_FETCH}" == "true" ]; then
+        rm -rf bazel
+        cp -rfp bazelorig bazel
+      fi
 
       prune
 
