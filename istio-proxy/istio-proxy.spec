@@ -18,7 +18,7 @@
 
 Name:           istio-proxy
 Version:        0.7.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        The Istio Proxy is a microservice proxy that can be used on the client and server side, and forms a microservice mesh. The Proxy supports a large number of features.
 License:        ASL 2.0
 URL:            https://%{provider_prefix}
@@ -47,6 +47,7 @@ BuildRequires:  llvm-toolset-7-cmake-data
 
 Source0:        proxy-full.tar.xz
 Source1:        build.sh
+Source2:        test.sh
 
 %description
 The Istio Proxy is a microservice proxy that can be used on the client and server side, and forms a microservice mesh. The Proxy supports a large number of features.
@@ -79,6 +80,10 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p ${RPM_BUILD_ROOT}/usr/local/bin
 
 cp -pav ${RPM_BUILD_DIR}/envoy ${RPM_BUILD_ROOT}/usr/local/bin
+
+%check
+cd ..
+RUN_TESTS=true %{SOURCE2}
 
 %files
 /usr/local/bin/envoy
