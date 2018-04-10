@@ -1,13 +1,23 @@
 #!/bin/bash
 
 NEW_SOURCES=""
-PKG_COMMAND=${PKG:-rhpkg}
 
 function usage() {
-    echo "$0 <SHA of istio> <SHA of vendor>"
+    echo "Usage: $0 [-i <SHA of istio>] [-v <SHA of vendor>]"
     echo
     exit 0
 }
+
+while getopts ":i:v:" opt; do
+  case ${opt} in
+    i) ISTIO_SHA="${OPTARG}";;
+    v) VENDOR_SHA="${OPTARG}";;
+    *) usage;;
+  esac
+done
+
+[[ -z "${ISTIO_SHA}" ]] && ISTIO_SHA="$(grep '%global git_commit ' istio.spec | cut -d' ' -f3)"
+[[ -z "${VENDOR_SHA}" ]] && VENDOR_SHA="$(grep '%global vendor_git_commit ' istio.spec | cut -d' ' -f3)"
 
 function update_commit() {
     local prefix="$1"
@@ -35,29 +45,16 @@ function update_commit() {
 
 function new_sources() {
     echo
-    echo "Executing ${PKG_COMMAND} new-sources ${NEW_SOURCES}"
-    ${PKG_COMMAND} new-sources ${NEW_SOURCES}
-
-    if [ $? -eq 0 ]; then
-        git add istio.spec
-    fi
-}
-
-function update_snapshot_info() {
-    local date="$(date +'%Y%m%d')"
-    sed -i "s/%global build_date .*/%global build_date ${date}/" istio.spec
+    echo "Updating sources file with ${NEW_SOURCES}"
+    md5sum ${NEW_SOURCES} > sources
 }
 
 function update_buildinfo() {
     local sha="$1"
     sed -i "s/buildGitRevision .*/buildGitRevision ${sha}/" buildinfo
-    git add buildinfo
 }
 
-[ $# -eq 2 ] || usage
-
-update_commit "" "$1"
-update_commit "vendor-" "$2"
-update_snapshot_info
-update_buildinfo "$1"
+update_commit "" "${ISTIO_SHA}"
+update_commit "vendor-" "${VENDOR_SHA}"
+update_buildinfo "${ISTIO_SHA}"
 new_sources
