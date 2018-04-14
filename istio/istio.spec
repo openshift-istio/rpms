@@ -11,7 +11,7 @@
 %global debug_package   %{nil}
 %endif
 
-%global git_commit cc84e301acc1fbf101349085a6b3b5098958f891
+%global git_commit ecce3fc88f4070378f17416488d188299dceee1d
 %global git_shortcommit  %(c=%{git_commit}; echo ${c:0:7})
 
 %global provider        github
@@ -25,17 +25,14 @@
 %global vendor_repo     vendor-istio
 # https://github.com/openshift-istio/vendor-istio
 %global vendor_prefix %{provider}.%{provider_tld}/%{project}/%{vendor_repo}
-%global vendor_git_commit 763fb08c93d2de2903217b4e282fb8d4e364eeaf
-
-%global build_date 20180405
-%global snapshot_info %{build_date}git%{git_shortcommit}
+%global vendor_git_commit e205bc653c19a6a0591e1da5e7e7f42c284e2eff
 
 # Use /usr/local as base dir, once upstream heavily depends on that
 %global _prefix /usr/local
 
 Name:           istio
 Version:        0.8.0
-Release:        0.4.0.git.0.%{git_shortcommit}%{?dist}
+Release:        0.5.0.git.0.%{git_shortcommit}%{?dist}
 Summary:        An open platform to connect, manage, and secure microservices
 License:        ASL 2.0
 URL:            https://%{provider_prefix}
@@ -148,12 +145,12 @@ This package contains the mixc program.
 
 mixc is a debug/development CLI tool to interact with Mixer API.
 
-########### ca ###############
-%package ca
-Summary:  Istio Certificate Authority (CA)
+########### citadel ###############
+%package citadel
+Summary:  Istio Security Component
 Requires: istio = %{version}-%{release}
 
-%description ca
+%description citadel
 Istio is an open platform that provides a uniform way to connect, manage
 and secure microservices. Istio supports managing traffic flows between
 microservices, enforcing access policies, and aggregating telemetry data,
@@ -161,7 +158,7 @@ all without requiring changes to the microservice code.
 
 This package contains the istio_ca program.
 
-This is the Istio Certificate Authority (CA) component.
+This is the Istio Certificate Authority (CA) + security components.
 
 %if 0%{?with_devel}
 %package devel
@@ -361,7 +358,7 @@ cd ISTIO
 export GOPATH=$(pwd):%{gopath}
 
 pushd src/istio.io/istio
-make pilot-discovery pilot-agent istioctl sidecar-injector mixc mixs istio-ca
+make pilot-discovery pilot-agent istioctl sidecar-injector mixc mixs citadel
 popd
 
 %install
@@ -428,7 +425,7 @@ sort -u -o devel.file-list devel.file-list
 %files mixc
 %{_bindir}/mixc
 
-%files ca
+%files citadel
 %{_bindir}/istio_ca
 
 %if 0%{?with_devel}
