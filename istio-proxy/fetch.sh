@@ -1,5 +1,4 @@
 set -x
-set -e
 
 function check_envs() {
   if [ -z "$FETCH_DIR" ]; then
@@ -184,8 +183,12 @@ function fetch() {
           source /opt/rh/devtoolset-4/enable
         fi
 
-        if [[ ${PATH} != *"llvm-toolset"* ]]; then
-          source /opt/rh/llvm-toolset-7/enable
+        grep -Fxq "Red Hat Enterprise Linux Server" /etc/redhat-release
+        RHEL="$?"
+        if [ $RHEL ]; then
+          if [[ ${PATH} != *"llvm-toolset"* ]]; then
+            source /opt/rh/llvm-toolset-7/enable
+          fi
         fi
 
         pushd ${FETCH_DIR}/istio-proxy/proxy
