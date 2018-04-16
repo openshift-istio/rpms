@@ -40,6 +40,10 @@ function set_default_envs() {
   if [ -z "${DEBUG_FETCH}" ]; then
     DEBUG_FETCH=false
   fi
+
+  if [ -z "${CREATE_ARTIFACTS}" ]; then
+    CREATE_ARTIFACTS=false
+  fi
 }
 
 function preprocess_envs() {
@@ -50,7 +54,9 @@ function preprocess_envs() {
 
 function prune() {
   #prune git
-  find . -name ".git*" | xargs rm -rf
+  if [ ! "${CREATE_ARTIFACTS}" == "true" ]; then
+    find . -name ".git*" | xargs rm -rf
+  fi
 
   #prune logs
   find . -name "*.log" | xargs rm -rf
@@ -140,6 +146,7 @@ function fetch() {
         git clone ${PROXY_GIT_REPO}
         pushd proxy
           git checkout ${PROXY_GIT_BRANCH}
+          SHA="$(git rev-parse --verify HEAD)"
         popd
       fi
 
