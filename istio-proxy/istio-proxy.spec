@@ -18,13 +18,13 @@
 
 Name:           istio-proxy
 Version:        0.7.1
-Release:        4%{?dist}
+Release:        11%{?dist}
 Summary:        The Istio Proxy is a microservice proxy that can be used on the client and server side, and forms a microservice mesh. The Proxy supports a large number of features.
 License:        ASL 2.0
 URL:            https://%{provider_prefix}
 
 #Common
-BuildRequires:  bazel
+BuildRequires:  bazel = 0.12.0
 BuildRequires:  devtoolset-4-gcc
 BuildRequires:  devtoolset-4-gcc-c++
 BuildRequires:  devtoolset-4-libatomic-devel
@@ -48,6 +48,8 @@ BuildRequires:  llvm-toolset-7-cmake-data
 Source0:        proxy-full.tar.xz
 Source1:        build.sh
 Source2:        test.sh
+Source3:        fetch.sh
+Source4:        common.sh
 
 %description
 The Istio Proxy is a microservice proxy that can be used on the client and server side, and forms a microservice mesh. The Proxy supports a large number of features.

@@ -44,7 +44,18 @@ function set_default_envs() {
   if [ -z "${CREATE_ARTIFACTS}" ]; then
     CREATE_ARTIFACTS=false
   fi
+
+  if [ -z "${RPM_SOURCE_DIR}" ]; then
+    RPM_SOURCE_DIR=.
+  fi
 }
+
+check_envs
+set_default_envs
+
+source ${RPM_SOURCE_DIR}/common.sh
+
+check_dependencies
 
 function preprocess_envs() {
   if [ "${CLEAN_FETCH}" == "true" ]; then
@@ -144,9 +155,11 @@ function fetch() {
       #clone proxy
       if [ ! -d "proxy" ]; then
         git clone ${PROXY_GIT_REPO}
-        pushd proxy
+        pushd ${FETCH_DIR}/istio-proxy/proxy
           git checkout ${PROXY_GIT_BRANCH}
-          SHA="$(git rev-parse --verify HEAD)"
+          if [ -d ".git" ]; then
+            SHA="$(git rev-parse --verify HEAD)"
+          fi
         popd
       fi
 
@@ -180,13 +193,7 @@ function fetch() {
 
       #bazel fetch
       if [ ! -d "${bazel_dir}" ]; then 
-        if [[ ${PATH} != *"devtoolset"* ]]; then
-          source /opt/rh/devtoolset-4/enable
-        fi
-
-        if [[ ${PATH} != *"llvm-toolset"* ]]; then
-          source /opt/rh/llvm-toolset-7/enable
-        fi
+        set_path
 
         pushd ${FETCH_DIR}/istio-proxy/proxy
           bazel --output_base=${FETCH_DIR}/istio-proxy/bazel/base --output_user_root=${FETCH_DIR}/istio-proxy/bazel/root --batch fetch //...
@@ -198,6 +205,7 @@ function fetch() {
       fi
 
       if [ "$FETCH_ONLY" = "true" ]; then
+        popd
         exit 0
       fi
 
@@ -236,8 +244,6 @@ function create_tarball(){
   fi
 }
 
-check_envs
-set_default_envs
 preprocess_envs
 fetch
 add_path_markers
