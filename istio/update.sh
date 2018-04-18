@@ -3,7 +3,7 @@
 NEW_SOURCES=""
 
 function usage() {
-    echo "Usage: $0 [-i <SHA of istio>] [-v <SHA of vendor>]"
+    echo "Usage: $0 [-i <SHA of istio>]"
     echo
     exit 0
 }
@@ -11,13 +11,11 @@ function usage() {
 while getopts ":i:v:" opt; do
   case ${opt} in
     i) ISTIO_SHA="${OPTARG}";;
-    v) VENDOR_SHA="${OPTARG}";;
     *) usage;;
   esac
 done
 
 [[ -z "${ISTIO_SHA}" ]] && ISTIO_SHA="$(grep '%global git_commit ' istio.spec | cut -d' ' -f3)"
-[[ -z "${VENDOR_SHA}" ]] && VENDOR_SHA="$(grep '%global vendor_git_commit ' istio.spec | cut -d' ' -f3)"
 
 function update_commit() {
     local prefix="$1"
@@ -55,6 +53,5 @@ function update_buildinfo() {
 }
 
 update_commit "" "${ISTIO_SHA}"
-update_commit "vendor-" "${VENDOR_SHA}"
 update_buildinfo "${ISTIO_SHA}"
 new_sources

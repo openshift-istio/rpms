@@ -1,5 +1,5 @@
-buildVersion 0.8.0-RC1
-buildGitRevision bfb8773cbdae519d19b9ec70886001a1560597a0
+buildVersion 0.8.0-post-RC1
+buildGitRevision fdd39716fe5d376a0ba3fe90b1a8f6485162f1ee
 buildUser redhat
 buildHost redhat
 buildDockerHub docker.io/openshiftistio

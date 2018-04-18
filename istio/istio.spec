@@ -11,7 +11,7 @@
 %global debug_package   %{nil}
 %endif
 
-%global git_commit bfb8773cbdae519d19b9ec70886001a1560597a0
+%global git_commit fdd39716fe5d376a0ba3fe90b1a8f6485162f1ee
 %global git_shortcommit  %(c=%{git_commit}; echo ${c:0:7})
 
 %global provider        github
@@ -22,25 +22,19 @@
 %global provider_prefix %{provider}.%{provider_tld}/%{project}/%{repo}
 %global import_path     istio.io/istio
 
-%global vendor_repo     vendor-istio
-# https://github.com/openshift-istio/vendor-istio
-%global vendor_prefix %{provider}.%{provider_tld}/%{project}/%{vendor_repo}
-%global vendor_git_commit e205bc653c19a6a0591e1da5e7e7f42c284e2eff
-
 # Use /usr/local as base dir, once upstream heavily depends on that
 %global _prefix /usr/local
 
 Name:           istio
 Version:        0.8.0
-Release:        0.6.0.git.0.%{git_shortcommit}%{?dist}
+Release:        0.7.0.git.0.%{git_shortcommit}%{?dist}
 Summary:        An open platform to connect, manage, and secure microservices
 License:        ASL 2.0
 URL:            https://%{provider_prefix}
 
 Source0:        https://%{provider_prefix}/archive/%{git_commit}/%{repo}-%{git_commit}.tar.gz
-Source1:        https://%{vendor_prefix}/archive/%{vendor_git_commit}/%{vendor_repo}-%{vendor_git_commit}.tar.gz
-Source2:        istiorc
-Source3:        buildinfo
+Source1:        istiorc
+Source2:        buildinfo
 
 # e.g. el6 has ppc64 arch without gcc-go, so EA tag is required
 ExclusiveArch:  %{?go_arches:%{go_arches}}%{!?go_arches:%{ix86} x86_64 aarch64 %{arm}}
@@ -347,11 +341,8 @@ rm -rf ISTIO
 mkdir -p ISTIO/src/istio.io/istio
 tar zxf %{SOURCE0} -C ISTIO/src/istio.io/istio --strip=1
 
-mkdir -p ISTIO/src/istio.io/istio/vendor
-tar zxf %{SOURCE1} -C ISTIO/src/istio.io/istio/vendor --strip=1
-
-cp %{SOURCE2} ISTIO/src/istio.io/istio/.istiorc.mk
-cp %{SOURCE3} ISTIO/src/istio.io/istio/buildinfo
+cp %{SOURCE1} ISTIO/src/istio.io/istio/.istiorc.mk
+cp %{SOURCE2} ISTIO/src/istio.io/istio/buildinfo
 
 %build
 cd ISTIO
@@ -436,5 +427,26 @@ sort -u -o devel.file-list devel.file-list
 %endif
 
 %changelog
-* Tue Feb 27 2018 Jonh Wendell <jonh.wendell@redhat.com> - 0.7.0
+* Wed Apr 18 2018 Jonh Wendell <jonh.wendell@redhat.com> - 0.8.0-0
+- Vendor is not a submodule anymore
+
+* Tue Apr 17 2018 Jonh Wendell <jonh.wendell@redhat.com> - 0.8.0-0rc1
+- Update to 0.8rc1
+
+* Thu Apr 5 2018 Jonh Wendell <jonh.wendell@redhat.com> - 0.7.1-2
+- Optionally run unit tests
+
+* Sat Mar 31 2018 Jonh Wendell <jonh.wendell@redhat.com> - 0.7.1-1
+- New version
+
+* Tue Mar 13 2018 Jonh Wendell <jonh.wendell@redhat.com> - 0.6.0-4
+- Fix the docker hub and version (tag)
+
+* Mon Mar 12 2018 Jonh Wendell <jonh.wendell@redhat.com> - 0.6.0-3
+- Use /usr/local as base dir, once upstream heavily depends on that
+
+* Tue Mar 6 2018 Jonh Wendell <jonh.wendell@redhat.com> - 0.6.0-2
+- Update buildinfo file. Now it will be updated by update.sh
+
+* Tue Feb 27 2018 Jonh Wendell <jonh.wendell@redhat.com> - 0.6.0-1
 - First package
