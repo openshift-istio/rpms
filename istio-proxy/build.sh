@@ -17,51 +17,53 @@ function set_default_envs() {
   if [ -z "${TARBALL_SUFFIX}" ]; then
     TARBALL_SUFFIX=alpha
   fi
-}
 
-function set_path() {
-
-  if [ "${CENTOS}" == "true" ]; then 
-    ln -s /usr/bin/cmake3 cmake
-    export PATH=$(pwd):$PATH
-  elif [[ ${PATH} != *"llvm-toolset"* ]]; then
-    source /opt/rh/llvm-toolset-7/enable
-  fi
-
-  if [[ ${PATH} != *"devtoolset"* ]]; then
-    source /opt/rh/devtoolset-4/enable
+  if [ -z "${RPM_SOURCE_DIR}" ]; then
+    RPM_SOURCE_DIR=.
   fi
 }
+
+set_default_envs
+
+source ${RPM_SOURCE_DIR}/common.sh
+
+check_dependencies
 
 function copy_fetch() {
 
   if [ "$FETCH_DIR" == "${RPM_BUILD_DIR}/istio-proxy" ]; then
     pushd ${FETCH_DIR}/proxy
-      SHA="$(git rev-parse --verify HEAD)"
+      if [ -d ".git" ]; then
+        SHA="$(git rev-parse --verify HEAD)"
+      fi
     popd
 
     #bazel build expects istio-proxy-${PROXY_GIT_BRANCH} dir
-    mkdir -p istio-proxy-${PROXY_GIT_BRANCH}
-    mv ${FETCH_DIR} istio-proxy-${PROXY_GIT_BRANCH}
+    mkdir -p ${RPM_BUILD_DIR}/istio-proxy-${PROXY_GIT_BRANCH}
+    mv ${FETCH_DIR} ${RPM_BUILD_DIR}/istio-proxy-${PROXY_GIT_BRANCH}
 
     #rpmbuild expects istio-proxy dir
     mkdir -p ${RPM_BUILD_DIR}/istio-proxy
   else
     pushd ${FETCH_DIR}/istio-proxy/proxy
-      SHA="$(git rev-parse --verify HEAD)"
+      if [ -d ".git" ]; then
+        SHA="$(git rev-parse --verify HEAD)"
+      fi
     popd
 
-    rm -rf istio-proxy-${PROXY_GIT_BRANCH}
-    cp -rfp ${FETCH_DIR} istio-proxy-${PROXY_GIT_BRANCH}
+    rm -rf ${RPM_BUILD_DIR}/istio-proxy-${PROXY_GIT_BRANCH}
+    cp -rfp ${FETCH_DIR} ${RPM_BUILD_DIR}/istio-proxy-${PROXY_GIT_BRANCH}
   fi
 }
 
 function run_build() {
-  pushd istio-proxy-${PROXY_GIT_BRANCH}/istio-proxy/proxy
+  pushd ${RPM_BUILD_DIR}/istio-proxy-${PROXY_GIT_BRANCH}/istio-proxy/proxy
 
     #replace fully qualified tool path from fetch
-    sed -i "s|BUILD_PATH_MARKER/bazel|${RPM_BUILD_DIR}/istio-proxy-${PROXY_GIT_BRANCH}/istio-proxy/bazel|" ../bazel/base/external/local_config_cc/cc_wrapper.sh
-    sed -i "s|BUILD_PATH_MARKER/bazel|${RPM_BUILD_DIR}/istio-proxy-${PROXY_GIT_BRANCH}/istio-proxy/bazel|" ../bazel/base/external/local_config_cc/CROSSTOOL
+    sed -i "s|BUILD_PATH_MARKER/bazel|${RPM_BUILD_DIR}/istio-proxy-${PROXY_GIT_BRANCH}/istio-proxy/bazel|" ${RPM_BUILD_DIR}/istio-proxy-${PROXY_GIT_BRANCH}/istio-proxy/bazel/base/external/local_config_cc/cc_wrapper.sh
+    sed -i "s|BUILD_PATH_MARKER/bazel|${RPM_BUILD_DIR}/istio-proxy-${PROXY_GIT_BRANCH}/istio-proxy/bazel|" ${RPM_BUILD_DIR}/istio-proxy-${PROXY_GIT_BRANCH}/istio-proxy/bazel/base/external/local_config_cc/CROSSTOOL
+
+    bazel version
 
     RECIPES_DIR=${RPM_BUILD_DIR}/istio-proxy-${PROXY_GIT_BRANCH}/istio-proxy bazel --output_base=${RPM_BUILD_DIR}/istio-proxy-${PROXY_GIT_BRANCH}/istio-proxy/bazel/base --output_user_root=${RPM_BUILD_DIR}/istio-proxy-${PROXY_GIT_BRANCH}/istio-proxy/bazel/root --batch build --config=${BUILD_CONFIG} "//..."
 
@@ -70,7 +72,7 @@ function run_build() {
 
 function create_artifacts() {
   if [ "${CREATE_ARTIFACTS}" == "true" ]; then
-    pushd istio-proxy-${PROXY_GIT_BRANCH}
+    pushd ${RPM_BUILD_DIR}/istio-proxy-${PROXY_GIT_BRANCH}
       mkdir -p usr/local/bin  
       cp istio-proxy/proxy/bazel-bin/src/envoy/envoy usr/local/bin/envoy
       cp istio-proxy/proxy/bazel-bin/src/envoy/envoy envoy
@@ -87,7 +89,6 @@ function copy_binary() {
   fi
 }
 
-set_default_envs
 set_path
 copy_fetch
 run_build
