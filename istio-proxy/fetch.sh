@@ -244,9 +244,17 @@ function create_tarball(){
   fi
 }
 
+function add_cxx_params(){
+  pushd ${FETCH_DIR}/istio-proxy/proxy
+    sed -i '1i build --cxxopt -D_GLIBCXX_USE_CXX11_ABI=1\n' tools/bazel.rc
+    sed -i '1i build --cxxopt -DENVOY_IGNORE_GLIBCXX_USE_CXX11_ABI_ERROR=1\n' tools/bazel.rc
+  popd
+}
+
 preprocess_envs
 fetch
 add_path_markers
+add_cxx_params
 create_tarball
 
 
