@@ -14,7 +14,7 @@ function set_default_envs() {
   fi
 
   if [ -z "${PROXY_GIT_BRANCH}" ]; then
-    PROXY_GIT_BRANCH=0.7.1
+    PROXY_GIT_BRANCH=release-0.8
   fi
 
   if [ -z "${RECIPES_GIT_REPO}" ]; then
@@ -22,7 +22,7 @@ function set_default_envs() {
   fi
 
   if [ -z "${RECIPES_GIT_BRANCH}" ]; then
-    RECIPES_GIT_BRANCH=0.7.0
+    RECIPES_GIT_BRANCH=0.8.0
   fi
 
   if [ -z "${CLEAN_FETCH}" ]; then
@@ -171,7 +171,7 @@ function fetch() {
           # gperftools 2.6.3
           # libevent 2.1.8-stable
           # luajit 2.0.5
-          # nghttp2 1.31.0
+          # nghttp2 1.31.1
           # yaml-cpp 0.6.1
           # zlib 1.2.11
 
