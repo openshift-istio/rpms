@@ -3,7 +3,7 @@ set -e
 
 function set_default_envs() {
   if [ -z "${PROXY_GIT_BRANCH}" ]; then
-    PROXY_GIT_BRANCH=0.7.1
+    PROXY_GIT_BRANCH=0.8.0
   fi
 
   if [ -z "${FETCH_DIR}" ]; then
