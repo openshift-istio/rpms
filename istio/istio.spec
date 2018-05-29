@@ -4,6 +4,8 @@
 %global with_debug 0
 # Run unit tests
 %global with_tests 0
+# Build test binaries
+%global with_test_binaries 0
 
 %if 0%{?with_debug}
 %global _dwz_low_mem_die_limit 0
@@ -153,6 +155,23 @@ all without requiring changes to the microservice code.
 This package contains the istio_ca program.
 
 This is the Istio Certificate Authority (CA) + security components.
+
+%if 0%{?with_test_binaries}
+
+########### tests ###############
+%package pilot-tests
+Summary:  Istio Pilot Test Binaries
+Requires: istio = %{version}-%{release}
+
+%description pilot-tests
+Istio is an open platform that provides a uniform way to connect, manage
+and secure microservices. Istio supports managing traffic flows between
+microservices, enforcing access policies, and aggregating telemetry data,
+all without requiring changes to the microservice code.
+
+This package contains the binaries needed for pilot tests.
+
+%endif
 
 %if 0%{?with_devel}
 %package devel
@@ -350,6 +369,11 @@ export GOPATH=$(pwd):%{gopath}
 
 pushd src/istio.io/istio
 make pilot-discovery pilot-agent istioctl sidecar-injector mixc mixs citadel
+
+%if 0%{?with_test_binaries}
+make test-bins
+%endif
+
 popd
 
 %install
@@ -358,6 +382,10 @@ mkdir -p $RPM_BUILD_ROOT%{_bindir}
 
 cp -pav ISTIO/out/linux_amd64/release/{pilot-discovery,pilot-agent,istioctl,sidecar-injector,mixs,mixc,istio_ca} $RPM_BUILD_ROOT%{_bindir}/
 
+%if 0%{?with_test_binaries}
+cp -pav ISTIO/out/linux_amd64/release/{pilot-test-server,pilot-test-client,pilot-test-eurekamirror} $RPM_BUILD_ROOT%{_bindir}/
+%endif
+
 %if 0%{?with_tests}
 
 %check
@@ -365,6 +393,7 @@ cd ISTIO
 export GOPATH=$(pwd):%{gopath}
 pushd src/istio.io/istio
 make localTestEnv test
+make localTestEnvCleanup
 popd
 
 %endif
@@ -418,6 +447,13 @@ sort -u -o devel.file-list devel.file-list
 
 %files citadel
 %{_bindir}/istio_ca
+
+%if 0%{?with_test_binaries}
+%files pilot-tests
+%{_bindir}/pilot-test-server
+%{_bindir}/pilot-test-client
+%{_bindir}/pilot-test-eurekamirror
+%endif
 
 %if 0%{?with_devel}
 %files devel -f devel.file-list
