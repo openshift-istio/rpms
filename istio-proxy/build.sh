@@ -3,7 +3,7 @@ set -e
 
 function set_default_envs() {
   if [ -z "${PROXY_GIT_BRANCH}" ]; then
-    PROXY_GIT_BRANCH=0.7.1
+    PROXY_GIT_BRANCH=0.8.0
   fi
 
   if [ -z "${FETCH_DIR}" ]; then
@@ -78,7 +78,6 @@ function create_artifacts() {
       cp istio-proxy/proxy/bazel-bin/src/envoy/envoy envoy
       tar -cvf envoy-${TARBALL_SUFFIX}-${SHA}.tar usr
       gzip envoy-${TARBALL_SUFFIX}-${SHA}.tar
-      scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i $HOME/.ssh/id_rsa envoy-${TARBALL_SUFFIX}-${SHA}.tar.gz geriatrix.boston.devel.redhat.com:/usr/share/nginx/html/istio-build/proxy/
     popd
   fi
 }
@@ -94,5 +93,3 @@ copy_fetch
 run_build
 create_artifacts
 copy_binary
-
-

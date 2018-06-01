@@ -14,7 +14,7 @@ function set_default_envs() {
   fi
 
   if [ -z "${PROXY_GIT_BRANCH}" ]; then
-    PROXY_GIT_BRANCH=0.7.1
+    PROXY_GIT_BRANCH=0.8.0
   fi
 
   if [ -z "${RECIPES_GIT_REPO}" ]; then
@@ -22,7 +22,7 @@ function set_default_envs() {
   fi
 
   if [ -z "${RECIPES_GIT_BRANCH}" ]; then
-    RECIPES_GIT_BRANCH=0.7.0
+    RECIPES_GIT_BRANCH=0.8.0
   fi
 
   if [ -z "${CLEAN_FETCH}" ]; then
@@ -171,7 +171,7 @@ function fetch() {
           # gperftools 2.6.3
           # libevent 2.1.8-stable
           # luajit 2.0.5
-          # nghttp2 1.31.0
+          # nghttp2 1.31.1
           # yaml-cpp 0.6.1
           # zlib 1.2.11
 
@@ -244,9 +244,15 @@ function create_tarball(){
   fi
 }
 
+function add_cxx_params(){
+  pushd ${FETCH_DIR}/istio-proxy/proxy
+    sed -i '1i build --cxxopt -D_GLIBCXX_USE_CXX11_ABI=1\n' tools/bazel.rc
+    sed -i '1i build --cxxopt -DENVOY_IGNORE_GLIBCXX_USE_CXX11_ABI_ERROR=1\n' tools/bazel.rc
+  popd
+}
+
 preprocess_envs
 fetch
 add_path_markers
+add_cxx_params
 create_tarball
-
-
