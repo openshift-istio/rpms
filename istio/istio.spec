@@ -13,7 +13,7 @@
 %global debug_package   %{nil}
 %endif
 
-%global git_commit d91d44ead27d9b4018ab5997ef7ec0f0a4621d9d
+%global git_commit 6f9f420f0c7119ff4fa6a1966a6f6d89b1b4db84
 %global git_shortcommit  %(c=%{git_commit}; echo ${c:0:7})
 
 %global provider        github
@@ -29,7 +29,7 @@
 
 Name:           istio
 Version:        0.8.0
-Release:        0.12.0.git.0.%{git_shortcommit}%{?dist}
+Release:        1%{?dist}
 Summary:        An open platform to connect, manage, and secure microservices
 License:        ASL 2.0
 URL:            https://%{provider_prefix}
