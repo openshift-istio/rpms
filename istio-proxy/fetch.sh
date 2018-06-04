@@ -14,7 +14,7 @@ function set_default_envs() {
   fi
 
   if [ -z "${PROXY_GIT_BRANCH}" ]; then
-    PROXY_GIT_BRANCH=release-0.8
+    PROXY_GIT_BRANCH=0.8.0
   fi
 
   if [ -z "${RECIPES_GIT_REPO}" ]; then
@@ -47,6 +47,10 @@ function set_default_envs() {
 
   if [ -z "${RPM_SOURCE_DIR}" ]; then
     RPM_SOURCE_DIR=.
+  fi
+
+  if [ -z "${FETCH_OR_BUILD}" ]; then
+    FETCH_OR_BUILD=fetch
   fi
 }
 
@@ -108,6 +112,14 @@ function prune() {
     #find . -name "*.so" | xargs rm -rf
     #rm -rf bazel/base/external/go_sdk/src/archive/
   #popd
+
+  if [ "$FETCH_OR_BUILD" = "build" ]; then
+    pushd ${FETCH_DIR}/istio-proxy
+      rm -rf bazel/base/execroot
+      rm -rf bazel/root/cache
+      find . -name "*.o" | xargs rm 
+    popd
+  fi
 }
 
 function correct_links() {
@@ -146,6 +158,22 @@ function add_custom_recipes() {
   cp -rf recipes/*.sh bazel/base/external/envoy/ci/build_container/build_recipes
 }
 
+function add_cxx_params(){
+  pushd ${FETCH_DIR}/istio-proxy/proxy
+    sed -i '1i build --cxxopt -D_GLIBCXX_USE_CXX11_ABI=1\n' tools/bazel.rc
+    sed -i '1i build --cxxopt -DENVOY_IGNORE_GLIBCXX_USE_CXX11_ABI_ERROR=1\n' tools/bazel.rc
+  popd
+}
+
+function patch_python(){
+  pushd ${FETCH_DIR}/istio-proxy/bazel/base
+    mkdir -p execroot/__main__/external
+    cp -rf external/com_google_protobuf execroot/__main__/external
+    cp -rf external/com_google_protobuf_cc execroot/__main__/external
+    cp -rf external/com_github_google_protobuf execroot/__main__/external
+  popd
+}
+
 function fetch() {
   if [ ! -d "${FETCH_DIR}/istio-proxy" ]; then
     mkdir -p ${FETCH_DIR}/istio-proxy
@@ -161,6 +189,8 @@ function fetch() {
             SHA="$(git rev-parse --verify HEAD)"
           fi
         popd
+
+        add_cxx_params
       fi
 
       if [ ! "$FETCH_ONLY" = "true" ]; then
@@ -169,10 +199,10 @@ function fetch() {
           # benchmark e1c3a83b8197cf02e794f61228461c27d4e78cfb
           # cares cares-1_14_0
           # gperftools 2.6.3
-          # libevent 2.1.8-stable
+          # libevent 2.1.8-stable./istio-proxy/istio-proxy/bazel/base/external/envoy/ci/build_container/build_recipes/benchmark.sh
           # luajit 2.0.5
-          # nghttp2 1.31.1
-          # yaml-cpp 0.6.1
+          # nghttp2 1.32.0
+          # yaml-cpp 0.6.2
           # zlib 1.2.11
 
           git clone ${RECIPES_GIT_REPO} -b ${RECIPES_GIT_BRANCH} recipes
@@ -191,12 +221,16 @@ function fetch() {
         bazel_dir="bazelorig"
       fi
 
-      #bazel fetch
       if [ ! -d "${bazel_dir}" ]; then 
         set_path
 
         pushd ${FETCH_DIR}/istio-proxy/proxy
-          bazel --output_base=${FETCH_DIR}/istio-proxy/bazel/base --output_user_root=${FETCH_DIR}/istio-proxy/bazel/root --batch fetch //...
+          set +e
+          bazel --output_base=${FETCH_DIR}/istio-proxy/bazel/base --output_user_root=${FETCH_DIR}/istio-proxy/bazel/root --batch ${FETCH_OR_BUILD} //...
+          set -e
+
+          patch_python
+          bazel --output_base=${FETCH_DIR}/istio-proxy/bazel/base --output_user_root=${FETCH_DIR}/istio-proxy/bazel/root --batch ${FETCH_OR_BUILD} //...
         popd
 
         if [ "${DEBUG_FETCH}" == "true" ]; then
@@ -244,17 +278,9 @@ function create_tarball(){
   fi
 }
 
-function add_cxx_params(){
-  pushd ${FETCH_DIR}/istio-proxy/proxy
-    sed -i '1i build --cxxopt -D_GLIBCXX_USE_CXX11_ABI=1\n' tools/bazel.rc
-    sed -i '1i build --cxxopt -DENVOY_IGNORE_GLIBCXX_USE_CXX11_ABI_ERROR=1\n' tools/bazel.rc
-  popd
-}
-
 preprocess_envs
 fetch
 add_path_markers
-add_cxx_params
 create_tarball
 
 
