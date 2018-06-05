@@ -166,11 +166,8 @@ function add_cxx_params(){
 }
 
 function patch_python(){
-  pushd ${FETCH_DIR}/istio-proxy/bazel/base
-    mkdir -p execroot/__main__/external
-    cp -rf external/com_google_protobuf execroot/__main__/external
-    cp -rf external/com_google_protobuf_cc execroot/__main__/external
-    cp -rf external/com_github_google_protobuf execroot/__main__/external
+  pushd ${FETCH_DIR}/istio-proxy
+    sed -i 's|srcs = \["context.proto"\],|srcs = \["context.proto"\], external_deps = \[\], generate_python = False,|g' ./proxy/src/istio/authn/BUILD
   popd
 }
 
@@ -191,6 +188,7 @@ function fetch() {
         popd
 
         add_cxx_params
+        patch_python
       fi
 
       if [ ! "$FETCH_ONLY" = "true" ]; then
@@ -225,11 +223,6 @@ function fetch() {
         set_path
 
         pushd ${FETCH_DIR}/istio-proxy/proxy
-          set +e
-          bazel --output_base=${FETCH_DIR}/istio-proxy/bazel/base --output_user_root=${FETCH_DIR}/istio-proxy/bazel/root --batch ${FETCH_OR_BUILD} //...
-          set -e
-
-          patch_python
           bazel --output_base=${FETCH_DIR}/istio-proxy/bazel/base --output_user_root=${FETCH_DIR}/istio-proxy/bazel/root --batch ${FETCH_OR_BUILD} //...
         popd
 
