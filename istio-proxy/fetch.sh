@@ -185,7 +185,6 @@ function fetch() {
           if [ -d ".git" ]; then
             SHA="$(git rev-parse --verify HEAD)"
           fi
-          fi
         popd
 
         add_cxx_params
