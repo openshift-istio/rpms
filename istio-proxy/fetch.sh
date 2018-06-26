@@ -185,6 +185,7 @@ function fetch() {
           if [ -d ".git" ]; then
             SHA="$(git rev-parse --verify HEAD)"
           fi
+          fi
         popd
 
         add_cxx_params
@@ -201,6 +202,8 @@ function fetch() {
           # luajit 2.0.5
           # nghttp2 1.32.0
           # yaml-cpp 0.6.2
+          # nghttp2 1.31.1
+          # yaml-cpp 0.6.1
           # zlib 1.2.11
 
           git clone ${RECIPES_GIT_REPO} -b ${RECIPES_GIT_BRANCH} recipes
@@ -271,9 +274,15 @@ function create_tarball(){
   fi
 }
 
+function add_cxx_params(){
+  pushd ${FETCH_DIR}/istio-proxy/proxy
+    sed -i '1i build --cxxopt -D_GLIBCXX_USE_CXX11_ABI=1\n' tools/bazel.rc
+    sed -i '1i build --cxxopt -DENVOY_IGNORE_GLIBCXX_USE_CXX11_ABI_ERROR=1\n' tools/bazel.rc
+  popd
+}
+
 preprocess_envs
 fetch
 add_path_markers
+add_cxx_params
 create_tarball
-
-
