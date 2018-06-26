@@ -113,13 +113,13 @@ function prune() {
     #rm -rf bazel/base/external/go_sdk/src/archive/
   #popd
 
-  if [ "$FETCH_OR_BUILD" = "build" ]; then
-    pushd ${FETCH_DIR}/istio-proxy
-      rm -rf bazel/base/execroot
-      rm -rf bazel/root/cache
-      find . -name "*.o" | xargs rm 
-    popd
-  fi
+
+  pushd ${FETCH_DIR}/istio-proxy
+    rm -rf bazel/base/execroot
+    rm -rf bazel/root/cache
+    find . -name "*.o" | xargs rm 
+  popd
+
 }
 
 function correct_links() {
