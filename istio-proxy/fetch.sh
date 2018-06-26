@@ -198,7 +198,7 @@ function fetch() {
           # benchmark e1c3a83b8197cf02e794f61228461c27d4e78cfb
           # cares cares-1_14_0
           # gperftools 2.6.3
-          # libevent 2.1.8-stable./istio-proxy/istio-proxy/bazel/base/external/envoy/ci/build_container/build_recipes/benchmark.sh
+          # libevent 2.1.8-stable
           # luajit 2.0.5
           # nghttp2 1.32.0
           # yaml-cpp 0.6.2
