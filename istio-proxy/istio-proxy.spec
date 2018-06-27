@@ -78,7 +78,7 @@ istio-proxy is the proxy required by the Istio Pilot Agent that talks to Istio p
 %endif
 
 cd ..
-%{SOURCE1}
+FETCH_DIR= CREATE_ARTIFACTS= %{SOURCE1}
 
 %install
 rm -rf $RPM_BUILD_ROOT
