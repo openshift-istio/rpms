@@ -48,7 +48,7 @@ BuildRequires:  llvm-toolset-7-runtime
 BuildRequires:  llvm-toolset-7-cmake-data
 %endif
 
-Source0:        proxy-full.tar.xz
+Source0:        proxy-full-%{version}%{?dist}.tar.xz
 Source1:        build.sh
 Source2:        test.sh
 Source3:        fetch.sh
@@ -78,7 +78,7 @@ istio-proxy is the proxy required by the Istio Pilot Agent that talks to Istio p
 %endif
 
 cd ..
-%{SOURCE1}
+FETCH_DIR= CREATE_ARTIFACTS= %{SOURCE1}
 
 %install
 rm -rf $RPM_BUILD_ROOT

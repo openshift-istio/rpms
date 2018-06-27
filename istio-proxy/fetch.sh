@@ -48,6 +48,10 @@ function set_default_envs() {
   if [ -z "${RPM_SOURCE_DIR}" ]; then
     RPM_SOURCE_DIR=.
   fi
+
+  if [ -z "${FETCH_OR_BUILD}" ]; then
+    FETCH_OR_BUILD=fetch
+  fi
 }
 
 check_envs
@@ -108,6 +112,14 @@ function prune() {
     #find . -name "*.so" | xargs rm -rf
     #rm -rf bazel/base/external/go_sdk/src/archive/
   #popd
+
+
+  pushd ${FETCH_DIR}/istio-proxy
+    rm -rf bazel/base/execroot
+    rm -rf bazel/root/cache
+    find . -name "*.o" | xargs rm 
+  popd
+
 }
 
 function correct_links() {
@@ -146,6 +158,19 @@ function add_custom_recipes() {
   cp -rf recipes/*.sh bazel/base/external/envoy/ci/build_container/build_recipes
 }
 
+function add_cxx_params(){
+  pushd ${FETCH_DIR}/istio-proxy/proxy
+    sed -i '1i build --cxxopt -D_GLIBCXX_USE_CXX11_ABI=1\n' tools/bazel.rc
+    sed -i '1i build --cxxopt -DENVOY_IGNORE_GLIBCXX_USE_CXX11_ABI_ERROR=1\n' tools/bazel.rc
+  popd
+}
+
+function patch_python(){
+  pushd ${FETCH_DIR}/istio-proxy
+    sed -i 's|srcs = \["context.proto"\],|srcs = \["context.proto"\], external_deps = \[\], generate_python = False,|g' ./proxy/src/istio/authn/BUILD
+  popd
+}
+
 function fetch() {
   if [ ! -d "${FETCH_DIR}/istio-proxy" ]; then
     mkdir -p ${FETCH_DIR}/istio-proxy
@@ -161,6 +186,9 @@ function fetch() {
             SHA="$(git rev-parse --verify HEAD)"
           fi
         popd
+
+        add_cxx_params
+        patch_python
       fi
 
       if [ ! "$FETCH_ONLY" = "true" ]; then
@@ -171,6 +199,8 @@ function fetch() {
           # gperftools 2.6.3
           # libevent 2.1.8-stable
           # luajit 2.0.5
+          # nghttp2 1.32.0
+          # yaml-cpp 0.6.2
           # nghttp2 1.31.1
           # yaml-cpp 0.6.1
           # zlib 1.2.11
@@ -191,12 +221,11 @@ function fetch() {
         bazel_dir="bazelorig"
       fi
 
-      #bazel fetch
       if [ ! -d "${bazel_dir}" ]; then 
         set_path
 
         pushd ${FETCH_DIR}/istio-proxy/proxy
-          bazel --output_base=${FETCH_DIR}/istio-proxy/bazel/base --output_user_root=${FETCH_DIR}/istio-proxy/bazel/root --batch fetch //...
+          bazel --output_base=${FETCH_DIR}/istio-proxy/bazel/base --output_user_root=${FETCH_DIR}/istio-proxy/bazel/root --batch ${FETCH_OR_BUILD} //...
         popd
 
         if [ "${DEBUG_FETCH}" == "true" ]; then
