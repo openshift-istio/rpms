@@ -13,7 +13,7 @@
 %global debug_package   %{nil}
 %endif
 
-%global git_commit 6f9f420f0c7119ff4fa6a1966a6f6d89b1b4db84
+%global git_commit cf65e19c6a54df14d3a92de2221cc1e5153825de
 %global git_shortcommit  %(c=%{git_commit}; echo ${c:0:7})
 
 %global provider        github
@@ -28,8 +28,8 @@
 %global _prefix /usr/local
 
 Name:           istio
-Version:        0.8.0
-Release:        1%{?dist}
+Version:        1.0.0
+Release:        snapshot1%{?dist}
 Summary:        An open platform to connect, manage, and secure microservices
 License:        ASL 2.0
 URL:            https://%{provider_prefix}
@@ -463,6 +463,9 @@ sort -u -o devel.file-list devel.file-list
 %endif
 
 %changelog
+* Fri Jun 29 2018 Jonh Wendell <jonh.wendell@redhat.com> - 1.0.0
+- Updated to 1.0.0-snapshot.0
+
 * Wed Apr 18 2018 Jonh Wendell <jonh.wendell@redhat.com> - 0.8.0-0
 - Vendor is not a submodule anymore
 
