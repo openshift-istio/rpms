@@ -14,7 +14,7 @@ function set_default_envs() {
   fi
 
   if [ -z "${PROXY_GIT_BRANCH}" ]; then
-    PROXY_GIT_BRANCH=0.8.0
+    PROXY_GIT_BRANCH=1.0.0-snapshot.0
   fi
 
   if [ -z "${RECIPES_GIT_REPO}" ]; then
