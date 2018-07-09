@@ -49,7 +49,7 @@ function new_sources() {
 
 function update_buildinfo() {
     local sha="$1"
-    sed -i "s|istio.io/istio/pkg/version.buildGitRevision=.*|istio.io/istio/pkg/version.buildGitRevision=${sha}|" buildinfo
+    sed -i "s/buildGitRevision .*/buildGitRevision ${sha}/" buildinfo
 }
 
 update_commit "" "${ISTIO_SHA}"
