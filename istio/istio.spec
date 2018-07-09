@@ -13,7 +13,7 @@
 %global debug_package   %{nil}
 %endif
 
-%global git_commit cf65e19c6a54df14d3a92de2221cc1e5153825de
+%global git_commit 71133c145635f319888386a051e8313e9bcac069
 %global git_shortcommit  %(c=%{git_commit}; echo ${c:0:7})
 
 %global provider        github
@@ -29,7 +29,7 @@
 
 Name:           istio
 Version:        1.0.0
-Release:        snapshot1%{?dist}
+Release:        1.snapshot.0%{?dist}
 Summary:        An open platform to connect, manage, and secure microservices
 License:        ASL 2.0
 URL:            https://%{provider_prefix}
@@ -155,6 +155,21 @@ all without requiring changes to the microservice code.
 This package contains the istio_ca program.
 
 This is the Istio Certificate Authority (CA) + security components.
+
+########### galley ###############
+%package galley
+Summary:  Istio Galley Component
+Requires: istio = %{version}-%{release}
+
+%description galley
+Istio is an open platform that provides a uniform way to connect, manage
+and secure microservices. Istio supports managing traffic flows between
+microservices, enforcing access policies, and aggregating telemetry data,
+all without requiring changes to the microservice code.
+
+This package contains the galley program.
+
+Galley is responsible for configuration management in Istio.
 
 %if 0%{?with_test_binaries}
 
@@ -368,7 +383,7 @@ cd ISTIO
 export GOPATH=$(pwd):%{gopath}
 
 pushd src/istio.io/istio
-make pilot-discovery pilot-agent istioctl sidecar-injector mixc mixs citadel
+make pilot-discovery pilot-agent istioctl sidecar-injector mixc mixs citadel galley
 
 %if 0%{?with_test_binaries}
 make test-bins
@@ -380,7 +395,7 @@ popd
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT%{_bindir}
 
-cp -pav ISTIO/out/linux_amd64/release/{pilot-discovery,pilot-agent,istioctl,sidecar-injector,mixs,mixc,istio_ca} $RPM_BUILD_ROOT%{_bindir}/
+cp -pav ISTIO/out/linux_amd64/release/{pilot-discovery,pilot-agent,istioctl,sidecar-injector,mixs,mixc,istio_ca,galley} $RPM_BUILD_ROOT%{_bindir}/
 
 %if 0%{?with_test_binaries}
 cp -pav ISTIO/out/linux_amd64/release/{pilot-test-server,pilot-test-client,pilot-test-eurekamirror} $RPM_BUILD_ROOT%{_bindir}/
@@ -447,6 +462,9 @@ sort -u -o devel.file-list devel.file-list
 
 %files citadel
 %{_bindir}/istio_ca
+
+%files galley
+%{_bindir}/galley
 
 %if 0%{?with_test_binaries}
 %files pilot-tests
