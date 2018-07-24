@@ -13,7 +13,7 @@
 %global debug_package   %{nil}
 %endif
 
-%global git_commit 03d5b5722709baadaec6b504ec6d5514d950d787
+%global git_commit a66a221bfe4cc068abad0c1fba93093600a5c6ef
 %global git_shortcommit  %(c=%{git_commit}; echo ${c:0:7})
 
 %global provider        github
@@ -29,7 +29,7 @@
 
 Name:           istio
 Version:        1.0.0
-Release:        snapshot1%{?dist}
+Release:        snapshot2%{?dist}
 Summary:        An open platform to connect, manage, and secure microservices
 License:        ASL 2.0
 URL:            https://%{provider_prefix}
@@ -481,7 +481,10 @@ sort -u -o devel.file-list devel.file-list
 %endif
 
 %changelog
-* Fri Jun 29 2018 Brian Avery <bavery@redhat.com> - 1.0.0
+* Tue Jul 24 2018 Brian Avery <bavery@redhat.com> - 1.0.0
+- Updated to 1.0.0-snapshot.2
+
+* Mon Jul 23 2018 Brian Avery <bavery@redhat.com> - 1.0.0
 - Updated to 1.0.0-snapshot.1
 
 * Fri Jun 29 2018 Jonh Wendell <jonh.wendell@redhat.com> - 1.0.0
