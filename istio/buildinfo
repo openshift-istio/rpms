@@ -1,5 +1,5 @@
-istio.io/istio/pkg/version.buildVersion=1.0.0-snapshot.0
-istio.io/istio/pkg/version.buildGitRevision=cf65e19c6a54df14d3a92de2221cc1e5153825de
+istio.io/istio/pkg/version.buildVersion=1.0.0-snapshot.1
+istio.io/istio/pkg/version.buildGitRevision=03d5b5722709baadaec6b504ec6d5514d950d787
 istio.io/istio/pkg/version.buildUser=redhat
 istio.io/istio/pkg/version.buildHost=redhat
 istio.io/istio/pkg/version.buildDockerHub=docker.io/openshiftistio
