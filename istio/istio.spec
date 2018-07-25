@@ -29,7 +29,7 @@
 
 Name:           istio
 Version:        1.0.0
-Release:        1.snapshot.2%{?dist}
+Release:        2.snapshot.2%{?dist}
 Summary:        An open platform to connect, manage, and secure microservices
 License:        ASL 2.0
 URL:            https://%{provider_prefix}
