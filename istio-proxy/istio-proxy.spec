@@ -9,7 +9,7 @@
 %global debug_package   %{nil}
 %endif
 
-%global git_commit c025c87a8c25ca77c79ed1db411b7ddd84a4d91b 
+%global git_commit 01e1626b3baeba466f0144bd97dee23ac133bac8 
 %global git_shortcommit  %(c=%{git_commit}; echo ${c:0:7})
 
 # https://github.com/istio/proxy
@@ -21,7 +21,7 @@
 
 Name:           istio-proxy
 Version:        1.0.0
-Release:        0.snapshot.0%{?dist}
+Release:        2.snapshot.2%{?dist}
 Summary:        The Istio Proxy is a microservice proxy that can be used on the client and server side, and forms a microservice mesh. The Proxy supports a large number of features.
 License:        ASL 2.0
 URL:            https://%{provider_prefix}
