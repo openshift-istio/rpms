@@ -21,7 +21,7 @@
 
 Name:           istio-proxy
 Version:        1.0.0
-Release:        2.snapshot.2%{?dist}
+Release:        3.snapshot.2%{?dist}
 Summary:        The Istio Proxy is a microservice proxy that can be used on the client and server side, and forms a microservice mesh. The Proxy supports a large number of features.
 License:        ASL 2.0
 URL:            https://%{provider_prefix}
