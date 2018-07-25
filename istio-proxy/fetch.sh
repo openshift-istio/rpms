@@ -10,19 +10,19 @@ function check_envs() {
 
 function set_default_envs() {
   if [ -z "${PROXY_GIT_REPO}" ]; then
-    PROXY_GIT_REPO=https://github.com/openshift-istio/proxy
+    PROXY_GIT_REPO=https://github.com/Maistra/proxy
   fi
 
   if [ -z "${PROXY_GIT_BRANCH}" ]; then
-    PROXY_GIT_BRANCH=1.0.0-snapshot.2
+    PROXY_GIT_BRANCH=maistra-0.1.0
   fi
 
   if [ -z "${RECIPES_GIT_REPO}" ]; then
-    RECIPES_GIT_REPO=https://github.com/openshift-istio/recipes-istio-proxy
+    RECIPES_GIT_REPO=https://github.com/Maistra/recipes-istio-proxy
   fi
 
   if [ -z "${RECIPES_GIT_BRANCH}" ]; then
-    RECIPES_GIT_BRANCH=1.0.0-snapshot.2
+    RECIPES_GIT_BRANCH=master
   fi
 
   if [ -z "${CLEAN_FETCH}" ]; then
