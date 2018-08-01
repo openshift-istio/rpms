@@ -22,7 +22,7 @@ function update_commit() {
     local prefix_spec=${prefix/-/_}
     local sha="$2"
 
-    local tarball="https://github.com/openshift-istio/${prefix}istio/archive/${sha}/${prefix}istio-${sha}.tar.gz"
+    local tarball="https://github.com/maistra/${prefix}istio/archive/${sha}/${prefix}istio-${sha}.tar.gz"
     local filename="${prefix}istio-${sha}.tar.gz"
 
     echo -n "Checking ${prefix}istio...   "
