@@ -2,7 +2,7 @@ set -x
 set -e
 
 if [ -z "${BAZEL_VERSION}" ]; then
-  BAZEL_VERSION=0.12.0
+  BAZEL_VERSION=0.15.2
 fi
 
 function check_dependencies() {
