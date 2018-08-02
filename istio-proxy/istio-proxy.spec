@@ -27,7 +27,8 @@ License:        ASL 2.0
 URL:            https://%{provider_prefix}
 
 #Common
-BuildRequires:  bazel = 0.12.0
+BuildRequires:  bazel = 0.15.2
+BuildRequires:  ninja-build
 BuildRequires:  devtoolset-4-gcc
 BuildRequires:  devtoolset-4-gcc-c++
 BuildRequires:  devtoolset-4-libatomic-devel
