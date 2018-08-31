@@ -13,14 +13,14 @@
 %global debug_package   %{nil}
 %endif
 
-%global git_commit a66a221bfe4cc068abad0c1fba93093600a5c6ef
+%global git_commit 3a136c90ec5e308f236e0d7ebb5c4c5e405217f4
 %global git_shortcommit  %(c=%{git_commit}; echo ${c:0:7})
 
 %global provider        github
 %global provider_tld    com
-%global project         openshift-istio
+%global project         maistra
 %global repo            istio
-# https://github.com/openshift-istio/istio
+# https://github.com/maistra/istio
 %global provider_prefix %{provider}.%{provider_tld}/%{project}/%{repo}
 %global import_path     istio.io/istio
 
@@ -28,8 +28,8 @@
 %global _prefix /usr/local
 
 Name:           istio
-Version:        1.0.0
-Release:        2.snapshot.2%{?dist}
+Version:        0.1.0
+Release:        1%{?dist}
 Summary:        An open platform to connect, manage, and secure microservices
 License:        ASL 2.0
 URL:            https://%{provider_prefix}

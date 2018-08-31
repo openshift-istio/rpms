@@ -21,6 +21,10 @@ function set_default_envs() {
   if [ -z "${RPM_SOURCE_DIR}" ]; then
     RPM_SOURCE_DIR=.
   fi
+
+  if [ -z "${STRIP}" ]; then
+    STRIP="--strip-unneeded"
+  fi
 }
 
 set_default_envs
@@ -86,7 +90,12 @@ function create_artifacts() {
 
 function copy_binary() {
   if [ "${FETCH_DIR}" == "${RPM_BUILD_DIR}/istio-proxy" ]; then
-    cp istio-proxy-${PROXY_GIT_BRANCH}/istio-proxy/proxy/bazel-bin/src/envoy/envoy ${RPM_BUILD_DIR}
+    pushd ${RPM_BUILD_DIR}
+      if [ ! -z "${STRIP}" ]; then
+        strip ${STRIP} istio-proxy-${PROXY_GIT_BRANCH}/istio-proxy/proxy/bazel-bin/src/envoy/envoy
+      fi
+      cp istio-proxy-${PROXY_GIT_BRANCH}/istio-proxy/proxy/bazel-bin/src/envoy/envoy ${RPM_BUILD_DIR}
+    popd
   fi
 }
 

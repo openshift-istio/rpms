@@ -40,6 +40,7 @@ BuildRequires:  automake
 BuildRequires:  autoconf
 BuildRequires:  m4
 BuildRequires:  perl
+BuildRequires:  binutils
 
 %if 0%{?centos} >= 7
 BuildRequires:  cmake3
